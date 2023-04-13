@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: bot-unlar-ms API
+  description: API para el microservicio bot-unlar-ms de la Universidad Nacional de La Rioja
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /message:
+    get:
+      summary: Procesa el mensaje del usuario
+      description: Recibe el mensaje del usuario y lo procesa, devolviendo una respuesta del chatbot
+      operationId: processMessage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user
+          in: query
+          description: ID del usuario
+          required: true
+          schema:
+            type: string
+        - name: message
+          in: query
+          description: Mensaje del usuario
+          required: true
+          schema:
+            type: string
+        - name: lang
+          in: query
+          description: Código de idioma en formato ISO 639-1
+          required: false
+          schema:
+            type: string
+            default: "es"
+      responses:
+        '200':
+          description: Respuesta exitosa del chatbot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    description: Respuesta del chatbot al mensaje del usuario
+        '400':
+          description: Error en la solicitud (parámetros incorrectos o faltantes)
+        '401':
+          description: Error de autenticación (token inválido o expirado)
+        '500':
+          description: Error interno del servidor
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

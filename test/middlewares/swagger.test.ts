@@ -1,59 +1,59 @@
-import { INestApplication } from "@nestjs/common";
-import { SwaggerModule } from "@nestjs/swagger";
+import { INestApplication } from '@nestjs/common';
+import { SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as YAML from 'yaml';
-
 import { generateSwagger } from '@src/middlewares/swagger';
+
+jest.mock('fs');
+jest.mock('path');
+jest.mock('yaml');
+jest.mock('@nestjs/swagger', () => ({
+    SwaggerModule: {
+      setup: jest.fn(),
+    },
+  }));
 
 describe('generateSwagger', () => {
   let app: INestApplication;
-
+  
   beforeEach(() => {
-    // Mock the INestApplication object
-    app = {
-      use: jest.fn(),
-    } as unknown as INestApplication;
+    app = {} as INestApplication;
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should generate Swagger documentation', async () => {
-    // Mock the YAML file content
-    const yamlContent = `
-      openapi: 3.0.0
-      info:
-        title: Example API
-        version: 1.0.0
-    `;
+  it('should successfully generate swagger documentation', async () => {
+    const filePath = 'test-file-path';
+    const fileContent = 'test-file-content';
+    const yamlParsed = { key: 'value' };
 
-    jest.spyOn(fs, 'readFileSync').mockReturnValue(yamlContent);
+    (path.join as jest.Mock).mockReturnValue(filePath);
+    (fs.readFileSync as jest.Mock).mockReturnValue(fileContent);
+    (YAML.parse as jest.Mock).mockReturnValue(yamlParsed);
+    (SwaggerModule.setup as jest.Mock).mockReturnValue(undefined);
 
-    // Call the function to generate Swagger documentation
-    const result = await generateSwagger(app);
+    await generateSwagger(app);
 
-    // Check that the setup function was called with the expected arguments
-    expect(SwaggerModule.setup).toHaveBeenCalledWith('api', app, {
-      openapi: '3.0.0',
-      info: {
-        title: 'Example API',
-        version: '1.0.0',
-      },
-    });
+    expect(path.join).toHaveBeenCalledWith(process.cwd(), 'docs/swagger.yaml');
+    expect(fs.readFileSync).toHaveBeenCalledWith(filePath, 'utf8');
+    expect(YAML.parse).toHaveBeenCalledWith(fileContent);
+    expect(SwaggerModule.setup).toHaveBeenCalledWith('api', app, yamlParsed);
   });
 
-  it('should throw an error if the YAML file cannot be read', async () => {
-    // Mock the fs.readFileSync method to throw an error
-    jest.spyOn(fs, 'readFileSync').mockImplementation(() => {
-      throw new Error('Unable to read file');
+  it('should throw an error if unable to read the file', async () => {
+    const errorMessage = 'Test error message';
+    (path.join as jest.Mock).mockImplementation(() => {
+      throw new Error(errorMessage);
     });
 
-    // Call the function and expect it to throw an error
-    await expect(generateSwagger(app)).rejects.toThrowError('Unable to read file');
+    await expect(generateSwagger(app)).rejects.toThrowError(`Unable to read file: ${errorMessage}`);
 
-    // Check that the SwaggerModule.setup function was not called
+    expect(path.join).toHaveBeenCalledWith(process.cwd(), 'docs/swagger.yaml');
+    expect(fs.readFileSync).not.toHaveBeenCalled();
+    expect(YAML.parse).not.toHaveBeenCalled();
     expect(SwaggerModule.setup).not.toHaveBeenCalled();
   });
 });

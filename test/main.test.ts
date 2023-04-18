@@ -8,11 +8,9 @@ jest.mock('@src/app.module');
 jest.mock('@src/middlewares/swagger');
 
 describe('bootstrap', () => {
-
-
-    beforeEach(() => {
-        jest.clearAllMocks()
-    })
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   it('should bootstrap the application', async () => {
     const app = {
       listen: jest.fn(),
@@ -31,10 +29,10 @@ describe('bootstrap', () => {
 
   it('should call bootstrap() when NODE_ENV is not set to "test"', async () => {
     const app = {
-        listen: jest.fn(),
-      };
-  
-      (NestFactory.create as jest.Mock).mockResolvedValue(app);
+      listen: jest.fn(),
+    };
+
+    (NestFactory.create as jest.Mock).mockResolvedValue(app);
 
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';

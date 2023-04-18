@@ -9,14 +9,14 @@ jest.mock('fs');
 jest.mock('path');
 jest.mock('yaml');
 jest.mock('@nestjs/swagger', () => ({
-    SwaggerModule: {
-      setup: jest.fn(),
-    },
-  }));
+  SwaggerModule: {
+    setup: jest.fn(),
+  },
+}));
 
 describe('generateSwagger', () => {
   let app: INestApplication;
-  
+
   beforeEach(() => {
     app = {} as INestApplication;
   });
@@ -49,7 +49,9 @@ describe('generateSwagger', () => {
       throw new Error(errorMessage);
     });
 
-    await expect(generateSwagger(app)).rejects.toThrowError(`Unable to read file: ${errorMessage}`);
+    await expect(generateSwagger(app)).rejects.toThrowError(
+      `Unable to read file: ${errorMessage}`,
+    );
 
     expect(path.join).toHaveBeenCalledWith(process.cwd(), 'docs/swagger.yaml');
     expect(fs.readFileSync).not.toHaveBeenCalled();

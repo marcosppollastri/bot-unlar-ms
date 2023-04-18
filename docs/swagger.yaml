@@ -8,7 +8,7 @@ servers:
   - url: https://api.example.com/v1
 
 paths:
-  /message:
+  /chat:
     get:
       summary: Procesa el mensaje del usuario
       description: Recibe el mensaje del usuario y lo procesa, devolviendo una respuesta del chatbot

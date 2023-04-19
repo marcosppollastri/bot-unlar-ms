@@ -8,33 +8,30 @@ servers:
   - url: https://api.example.com/v1
 
 paths:
-  /message:
-    get:
+  /chat:
+    post:
       summary: Procesa el mensaje del usuario
       description: Recibe el mensaje del usuario y lo procesa, devolviendo una respuesta del chatbot
       operationId: processMessage
       security:
         - bearerAuth: []
-      parameters:
-        - name: user
-          in: query
-          description: ID del usuario
-          required: true
-          schema:
-            type: string
-        - name: message
-          in: query
-          description: Mensaje del usuario
-          required: true
-          schema:
-            type: string
-        - name: lang
-          in: query
-          description: Código de idioma en formato ISO 639-1
-          required: false
-          schema:
-            type: string
-            default: "es"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                  description: ID del usuario
+                message:
+                  type: string
+                  description: Mensaje del usuario
+                lang:
+                  type: string
+                  description: Código de idioma en formato ISO 639-1
+                  default: "es"
       responses:
         '200':
           description: Respuesta exitosa del chatbot

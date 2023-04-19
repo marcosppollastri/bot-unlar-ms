@@ -22,8 +22,6 @@ describe('AppController (e2e)', () => {
       .expect('Hello World!');
   });
   it('Swagger /api (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/api')
-      .expect(200)
+    return request(app.getHttpServer()).get('/api').expect(200);
   });
 });

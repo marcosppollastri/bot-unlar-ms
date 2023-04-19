@@ -1,0 +1,8 @@
+# Files and directories to ignore when copying files to the container
+node_modules
+npm-debug.log
+yarn-error.log
+test
+.git
+.gitignore
+.DS_Store

@@ -57,7 +57,7 @@ describe('ChatController', () => {
         await joiValidationPipe.transform(chatDto, { type: 'body' });
       } catch (error) {
         expect(error.status).toBe(400);
-        expect(error.message).toBe('Validation failed');
+        expect(error.name).toBe('BadRequestException');
       }
     });
   });
